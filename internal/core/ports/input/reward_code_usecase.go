@@ -1,6 +1,6 @@
 package input
 
-import "github.com/nocnoc-thailand/reward-management/internal/core/domain"
+import "github.com/pramot5525/reward-management/internal/core/domain"
 
 type RewardCodeUsecase interface {
 	CreateRewardCodes(rewardID uint, codes []domain.RewardCode) error

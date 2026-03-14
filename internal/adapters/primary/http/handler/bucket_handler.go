@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/nocnoc-thailand/reward-management/internal/core/ports/input"
+	"github.com/pramot5525/reward-management/internal/core/ports/input"
 )
 
 type BucketHandler struct {

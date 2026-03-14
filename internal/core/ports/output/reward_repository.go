@@ -1,6 +1,6 @@
 package output
 
-import "github.com/nocnoc-thailand/reward-management/internal/core/domain"
+import "github.com/pramot5525/reward-management/internal/core/domain"
 
 type RewardRepository interface {
 	Create(reward domain.Reward) (*domain.Reward, error)

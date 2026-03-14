@@ -1,8 +1,8 @@
 package mysql
 
 import (
-	"github.com/nocnoc-thailand/reward-management/internal/adapters/secondary/mysql/model"
-	"github.com/nocnoc-thailand/reward-management/internal/core/domain"
+	"github.com/pramot5525/reward-management/internal/adapters/secondary/mysql/model"
+	"github.com/pramot5525/reward-management/internal/core/domain"
 	"gorm.io/gorm"
 )
 

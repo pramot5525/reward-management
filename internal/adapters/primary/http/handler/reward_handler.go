@@ -6,10 +6,10 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	"github.com/nocnoc-thailand/reward-management/internal/adapters/primary/http/dto"
-	"github.com/nocnoc-thailand/reward-management/internal/adapters/primary/http/middleware"
-	"github.com/nocnoc-thailand/reward-management/internal/core/domain"
-	"github.com/nocnoc-thailand/reward-management/internal/core/ports/input"
+	"github.com/pramot5525/reward-management/internal/adapters/primary/http/dto"
+	"github.com/pramot5525/reward-management/internal/adapters/primary/http/middleware"
+	"github.com/pramot5525/reward-management/internal/core/domain"
+	"github.com/pramot5525/reward-management/internal/core/ports/input"
 )
 
 var validate = validator.New()

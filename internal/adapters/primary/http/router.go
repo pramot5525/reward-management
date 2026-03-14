@@ -2,8 +2,8 @@ package http
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/nocnoc-thailand/reward-management/internal/adapters/primary/http/handler"
-	"github.com/nocnoc-thailand/reward-management/internal/adapters/primary/http/middleware"
+	"github.com/pramot5525/reward-management/internal/adapters/primary/http/handler"
+	"github.com/pramot5525/reward-management/internal/adapters/primary/http/middleware"
 )
 
 type Router struct {

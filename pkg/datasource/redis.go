@@ -1,7 +1,7 @@
 package datasource
 
 import (
-	"github.com/nocnoc-thailand/reward-management/pkg/config"
+	"github.com/pramot5525/reward-management/pkg/config"
 	"github.com/redis/go-redis/v9"
 )
 

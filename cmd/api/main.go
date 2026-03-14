@@ -7,15 +7,15 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 
-	adapthttp "github.com/nocnoc-thailand/reward-management/internal/adapters/primary/http"
-	"github.com/nocnoc-thailand/reward-management/internal/adapters/primary/http/handler"
-	"github.com/nocnoc-thailand/reward-management/internal/adapters/secondary/cache"
-	"github.com/nocnoc-thailand/reward-management/internal/adapters/secondary/mysql"
-	s3adapter "github.com/nocnoc-thailand/reward-management/internal/adapters/secondary/s3"
-	"github.com/nocnoc-thailand/reward-management/internal/core/services"
-	"github.com/nocnoc-thailand/reward-management/pkg/config"
-	"github.com/nocnoc-thailand/reward-management/pkg/datasource"
-	"github.com/nocnoc-thailand/reward-management/pkg/logger"
+	adapthttp "github.com/pramot5525/reward-management/internal/adapters/primary/http"
+	"github.com/pramot5525/reward-management/internal/adapters/primary/http/handler"
+	"github.com/pramot5525/reward-management/internal/adapters/secondary/cache"
+	"github.com/pramot5525/reward-management/internal/adapters/secondary/mysql"
+	s3adapter "github.com/pramot5525/reward-management/internal/adapters/secondary/s3"
+	"github.com/pramot5525/reward-management/internal/core/services"
+	"github.com/pramot5525/reward-management/pkg/config"
+	"github.com/pramot5525/reward-management/pkg/datasource"
+	"github.com/pramot5525/reward-management/pkg/logger"
 )
 
 func main() {

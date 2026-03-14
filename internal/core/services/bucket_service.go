@@ -1,6 +1,6 @@
 package services
 
-import "github.com/nocnoc-thailand/reward-management/internal/core/ports/output"
+import "github.com/pramot5525/reward-management/internal/core/ports/output"
 
 type bucketService struct {
 	storage output.StoragePort

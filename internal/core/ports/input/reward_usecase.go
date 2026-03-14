@@ -1,6 +1,6 @@
 package input
 
-import "github.com/nocnoc-thailand/reward-management/internal/core/domain"
+import "github.com/pramot5525/reward-management/internal/core/domain"
 
 type RewardUsecase interface {
 	CreateReward(reward domain.Reward) (*domain.Reward, error)

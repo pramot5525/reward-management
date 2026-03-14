@@ -3,8 +3,8 @@ package services
 import (
 	"errors"
 
-	"github.com/nocnoc-thailand/reward-management/internal/core/domain"
-	"github.com/nocnoc-thailand/reward-management/internal/core/ports/output"
+	"github.com/pramot5525/reward-management/internal/core/domain"
+	"github.com/pramot5525/reward-management/internal/core/ports/output"
 )
 
 type redeemService struct {

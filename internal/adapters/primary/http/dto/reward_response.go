@@ -1,6 +1,6 @@
 package dto
 
-import "github.com/nocnoc-thailand/reward-management/internal/core/domain"
+import "github.com/pramot5525/reward-management/internal/core/domain"
 
 type RewardResponse struct {
 	ID               uint        `json:"id"`

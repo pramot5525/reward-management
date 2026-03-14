@@ -2,9 +2,9 @@ package handler
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/nocnoc-thailand/reward-management/internal/adapters/primary/http/dto"
-	"github.com/nocnoc-thailand/reward-management/internal/adapters/primary/http/middleware"
-	"github.com/nocnoc-thailand/reward-management/internal/core/ports/input"
+	"github.com/pramot5525/reward-management/internal/adapters/primary/http/dto"
+	"github.com/pramot5525/reward-management/internal/adapters/primary/http/middleware"
+	"github.com/pramot5525/reward-management/internal/core/ports/input"
 )
 
 type RedeemHandler struct {

@@ -1,4 +1,4 @@
-module github.com/nocnoc-thailand/reward-management
+module github.com/pramot5525/reward-management
 
 go 1.23
 

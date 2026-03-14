@@ -6,8 +6,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/nocnoc-thailand/reward-management/internal/adapters/secondary/mysql/model"
-	"github.com/nocnoc-thailand/reward-management/pkg/config"
+	"github.com/pramot5525/reward-management/internal/adapters/secondary/mysql/model"
+	"github.com/pramot5525/reward-management/pkg/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
