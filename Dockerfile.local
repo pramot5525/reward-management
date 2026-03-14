@@ -1,0 +1,19 @@
+FROM golang:1.23-alpine
+
+ARG GITHUB_TOKEN
+ENV GITHUB_TOKEN=$GITHUB_TOKEN
+
+RUN apk add --no-cache git curl
+
+RUN git config --global \
+  url."https://${GITHUB_TOKEN}@github.com".insteadOf \
+  "https://github.com"
+
+WORKDIR /app
+
+RUN go install github.com/air-verse/air@v1.61.7
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+CMD ["air", "-c", ".air.toml"]

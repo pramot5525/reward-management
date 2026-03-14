@@ -1,0 +1,226 @@
+{
+  "info": {
+    "name": "Reward Management",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8080" },
+    { "key": "token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/actuator/health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bucket",
+      "item": [
+        {
+          "name": "Ping S3",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/bucket/ping"
+          }
+        },
+        {
+          "name": "Upload Image",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/bucket/image",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "file", "type": "file", "src": "" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reward",
+      "item": [
+        {
+          "name": "Create Reward",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/reward",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"redeemPoint\": 100,\n  \"startDate\": \"2025-01-01\",\n  \"endDate\": \"2025-12-31\",\n  \"conditionBy\": \"tier\",\n  \"isLimitRedeem\": true,\n  \"countLimitRedeem\": 1,\n  \"tiers\": [\"GOLD\", \"PLATINUM\"],\n  \"infoTH\": {\n    \"title\": \"รางวัลพิเศษ\",\n    \"subtitle\": \"สำหรับสมาชิกระดับทอง\",\n    \"description\": \"รายละเอียดรางวัล\",\n    \"termCondition\": \"เงื่อนไข\",\n    \"bannerUrl\": \"http://localhost:4566/reward-bucket/banner.jpg\",\n    \"logoUrl\": \"http://localhost:4566/reward-bucket/logo.jpg\",\n    \"isCodeDisplayed\": true,\n    \"isQrDisplayed\": false,\n    \"isBarcodeDisplayed\": false\n  },\n  \"infoEN\": {\n    \"title\": \"Special Reward\",\n    \"subtitle\": \"For Gold members\",\n    \"description\": \"Reward description\",\n    \"termCondition\": \"Terms and conditions\",\n    \"bannerUrl\": \"http://localhost:4566/reward-bucket/banner.jpg\",\n    \"logoUrl\": \"http://localhost:4566/reward-bucket/logo.jpg\",\n    \"isCodeDisplayed\": true,\n    \"isQrDisplayed\": false,\n    \"isBarcodeDisplayed\": false\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Reward",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/v1/reward",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 1,\n  \"redeemPoint\": 150,\n  \"startDate\": \"2025-01-01\",\n  \"endDate\": \"2025-12-31\",\n  \"isLimitRedeem\": true,\n  \"countLimitRedeem\": 2\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Available Rewards (for user)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/reward",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Accept-Language", "value": "th" }
+            ]
+          }
+        },
+        {
+          "name": "Get Reward List (paginated)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/reward/list?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "reward", "list"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            },
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ]
+          }
+        },
+        {
+          "name": "Get Reward by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/reward/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "reward", "1"]
+            },
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Accept-Language", "value": "th" }
+            ]
+          }
+        },
+        {
+          "name": "Delete Reward",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/api/v1/reward/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "reward", "1"]
+            },
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reward Code",
+      "item": [
+        {
+          "name": "Create Reward Codes",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/reward/code",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rewardId\": 1,\n  \"codes\": [\"CODE001\", \"CODE002\", \"CODE003\"],\n  \"expiredDate\": \"2025-12-31T23:59:59Z\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Reward Code",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/v1/reward/code",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 1,\n  \"isAvailable\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Codes by Reward ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/reward/code?rewardId=1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "reward", "code"],
+              "query": [
+                { "key": "rewardId", "value": "1" }
+              ]
+            },
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Redeem",
+      "item": [
+        {
+          "name": "Redeem Reward",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/reward/redeem",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rewardId\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Get User Redeemed",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/reward/redeem",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Accept-Language", "value": "th" }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
