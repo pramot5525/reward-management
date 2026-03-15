@@ -1,0 +1,38 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+/reward-management
+/main
+
+# Build output
+/bin/
+/dist/
+tmp/
+
+# Go specific
+vendor/
+*.test
+*.out
+coverage.txt
+coverage.html
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Air (live reload)
+tmp/
