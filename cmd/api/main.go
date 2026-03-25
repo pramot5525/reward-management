@@ -46,6 +46,7 @@ func main() {
 	rewardRepo := mysql.NewRewardRepository(db)
 	rewardCodeRepo := mysql.NewRewardCodeRepository(db)
 	txRepo := mysql.NewRewardTransactionRepository(db)
+	tierRepo := mysql.NewTierRepository(db)
 	redisClient := datasource.NewRedisClient(cfg.Cache)
 	cacheAdapter := cache.NewRedisCache(redisClient)
 	storageAdapter := s3adapter.NewS3Storage(s3Client, cfg.AWS.S3Bucket, cfg.AWS.CDN)
@@ -55,12 +56,14 @@ func main() {
 	rewardCodeSvc := services.NewRewardCodeService(rewardCodeRepo, cacheAdapter)
 	redeemSvc := services.NewRedeemService(rewardRepo, rewardCodeRepo, txRepo, cacheAdapter)
 	bucketSvc := services.NewBucketService(storageAdapter)
+	tierSvc := services.NewTierService(tierRepo)
 
 	// Primary adapters (input)
 	rewardHandler := handler.NewRewardHandler(rewardSvc)
 	rewardCodeHandler := handler.NewRewardCodeHandler(rewardCodeSvc)
 	redeemHandler := handler.NewRedeemHandler(redeemSvc)
 	bucketHandler := handler.NewBucketHandler(bucketSvc)
+	tierHandler := handler.NewTierHandler(tierSvc)
 
 	// Fiber app
 	app := fiber.New()
@@ -68,7 +71,7 @@ func main() {
 	app.Use(cors.New(cors.Config{AllowOrigins: cfg.App.OriginDomain}))
 
 	// Routes
-	router := adapthttp.NewRouter(cfg.App.JWTSecret, rewardHandler, rewardCodeHandler, redeemHandler, bucketHandler)
+	router := adapthttp.NewRouter(cfg.App.JWTSecret, rewardHandler, rewardCodeHandler, redeemHandler, bucketHandler, tierHandler)
 	router.Register(app)
 
 	log.Fatal(app.Listen(":" + cfg.App.Port))

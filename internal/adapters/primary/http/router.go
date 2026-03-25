@@ -12,6 +12,7 @@ type Router struct {
 	rewardCode *handler.RewardCodeHandler
 	redeem     *handler.RedeemHandler
 	bucket     *handler.BucketHandler
+	tier       *handler.TierHandler
 }
 
 func NewRouter(
@@ -20,8 +21,9 @@ func NewRouter(
 	rewardCode *handler.RewardCodeHandler,
 	redeem *handler.RedeemHandler,
 	bucket *handler.BucketHandler,
+	tier *handler.TierHandler,
 ) *Router {
-	return &Router{jwtSecret: jwtSecret, reward: reward, rewardCode: rewardCode, redeem: redeem, bucket: bucket}
+	return &Router{jwtSecret: jwtSecret, reward: reward, rewardCode: rewardCode, redeem: redeem, bucket: bucket, tier: tier}
 }
 
 func (r *Router) Register(app *fiber.App) {
@@ -49,4 +51,7 @@ func (r *Router) Register(app *fiber.App) {
 
 	reward.Post("/redeem", r.redeem.Redeem)
 	reward.Get("/redeem", r.redeem.GetUserRedeemed)
+
+	public := app.Group("/api/public")
+	public.Get("/tiers", r.tier.GetTiers)
 }
