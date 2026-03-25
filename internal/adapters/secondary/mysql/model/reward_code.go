@@ -38,7 +38,7 @@ type RewardUser struct {
 
 type LoyaltyTier struct {
 	gorm.Model
-	Code     string `gorm:"uniqueIndex;size:50"`
+	Code     string `gorm:"size:50"`
 	Name     string `gorm:"size:100"`
 	ImageURL string `gorm:"size:500"`
 }

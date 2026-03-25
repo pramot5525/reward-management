@@ -39,7 +39,6 @@ func NewMySQL(cfg config.DatabaseConfig) (*gorm.DB, error) {
 		&model.RewardTransaction{},
 		&model.Tier{},
 		&model.RewardUser{},
-		&model.LoyaltyTier{},
 	); err != nil {
 		return nil, err
 	}

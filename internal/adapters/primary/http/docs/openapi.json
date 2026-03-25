@@ -1,0 +1,476 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Reward Management API",
+    "description": "API for managing rewards, redemptions, and loyalty tiers",
+    "version": "1.0.0"
+  },
+  "servers": [
+    { "url": "http://localhost:8080", "description": "Local development" }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" }
+        }
+      },
+      "RewardInfoRequest": {
+        "type": "object",
+        "required": ["title"],
+        "properties": {
+          "title":              { "type": "string" },
+          "subtitle":           { "type": "string" },
+          "description":        { "type": "string" },
+          "termCondition":      { "type": "string" },
+          "bannerUrl":          { "type": "string" },
+          "logoUrl":            { "type": "string" },
+          "isCodeDisplayed":    { "type": "boolean" },
+          "isQrDisplayed":      { "type": "boolean" },
+          "isBarcodeDisplayed": { "type": "boolean" }
+        }
+      },
+      "CreateRewardRequest": {
+        "type": "object",
+        "required": ["redeemPoint", "startDate", "endDate", "conditionBy", "infoTH", "infoEN"],
+        "properties": {
+          "redeemPoint":      { "type": "integer", "minimum": 1 },
+          "startDate":        { "type": "string", "format": "date", "example": "2025-01-01" },
+          "endDate":          { "type": "string", "format": "date", "example": "2025-12-31" },
+          "conditionBy":      { "type": "string", "enum": ["tier", "userId"] },
+          "isLimitRedeem":    { "type": "boolean" },
+          "countLimitRedeem": { "type": "integer", "minimum": 0, "maximum": 999 },
+          "tiers":            { "type": "array", "items": { "type": "string" } },
+          "userIds":          { "type": "array", "items": { "type": "string" } },
+          "infoTH":           { "$ref": "#/components/schemas/RewardInfoRequest" },
+          "infoEN":           { "$ref": "#/components/schemas/RewardInfoRequest" }
+        }
+      },
+      "UpdateRewardRequest": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id":               { "type": "integer" },
+          "redeemPoint":      { "type": "integer" },
+          "startDate":        { "type": "string", "format": "date" },
+          "endDate":          { "type": "string", "format": "date" },
+          "isLimitRedeem":    { "type": "boolean" },
+          "countLimitRedeem": { "type": "integer", "minimum": 0, "maximum": 999 },
+          "infoTH":           { "$ref": "#/components/schemas/RewardInfoRequest" },
+          "infoEN":           { "$ref": "#/components/schemas/RewardInfoRequest" }
+        }
+      },
+      "RewardInfoResponse": {
+        "type": "object",
+        "properties": {
+          "title":              { "type": "string" },
+          "subtitle":           { "type": "string" },
+          "description":        { "type": "string" },
+          "termCondition":      { "type": "string" },
+          "bannerUrl":          { "type": "string" },
+          "logoUrl":            { "type": "string" },
+          "isCodeDisplayed":    { "type": "boolean" },
+          "isQrDisplayed":      { "type": "boolean" },
+          "isBarcodeDisplayed": { "type": "boolean" }
+        }
+      },
+      "RewardResponse": {
+        "type": "object",
+        "properties": {
+          "id":               { "type": "integer" },
+          "redeemPoint":      { "type": "integer" },
+          "startDate":        { "type": "string", "format": "date" },
+          "endDate":          { "type": "string", "format": "date" },
+          "state":            { "type": "integer" },
+          "conditionBy":      { "type": "string" },
+          "isLimitRedeem":    { "type": "boolean" },
+          "countLimitRedeem": { "type": "integer" },
+          "info":             { "$ref": "#/components/schemas/RewardInfoResponse" }
+        }
+      },
+      "PaginatedRewardResponse": {
+        "type": "object",
+        "properties": {
+          "items": { "type": "array", "items": { "$ref": "#/components/schemas/RewardResponse" } },
+          "total": { "type": "integer" },
+          "page":  { "type": "integer" },
+          "limit": { "type": "integer" }
+        }
+      },
+      "CreateRewardCodesRequest": {
+        "type": "object",
+        "required": ["rewardId", "codes"],
+        "properties": {
+          "rewardId":    { "type": "integer" },
+          "codes":       { "type": "array", "items": { "type": "string" }, "minItems": 1, "maxItems": 1000 },
+          "expiredDate": { "type": "string", "format": "date-time", "nullable": true }
+        }
+      },
+      "UpdateRewardCodeRequest": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id":          { "type": "integer" },
+          "isAvailable": { "type": "boolean" }
+        }
+      },
+      "RewardCodeResponse": {
+        "type": "object",
+        "properties": {
+          "id":          { "type": "integer" },
+          "code":        { "type": "string" },
+          "isAvailable": { "type": "boolean" },
+          "expiredDate": { "type": "string", "format": "date-time", "nullable": true }
+        }
+      },
+      "RedeemRequest": {
+        "type": "object",
+        "required": ["rewardId"],
+        "properties": {
+          "rewardId": { "type": "integer" }
+        }
+      },
+      "RedeemResponse": {
+        "type": "object",
+        "properties": {
+          "code":        { "type": "string" },
+          "expiredDate": { "type": "string", "format": "date-time", "nullable": true }
+        }
+      },
+      "RedeemTransactionResponse": {
+        "type": "object",
+        "properties": {
+          "id":           { "type": "integer" },
+          "rewardCodeId": { "type": "integer" },
+          "status":       { "type": "string" }
+        }
+      },
+      "TierResponse": {
+        "type": "object",
+        "properties": {
+          "id":       { "type": "integer" },
+          "code":     { "type": "string" },
+          "name":     { "type": "string" },
+          "imageUrl": { "type": "string" }
+        }
+      },
+      "TierListResponse": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "type": "object",
+            "properties": {
+              "totalCount": { "type": "integer" }
+            }
+          },
+          "data": { "type": "array", "items": { "$ref": "#/components/schemas/TierResponse" } }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/actuator/health": {
+      "get": {
+        "tags": ["System"],
+        "summary": "Health check",
+        "responses": {
+          "200": {
+            "description": "Service is up",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "status": { "type": "string", "example": "UP" } }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bucket/image": {
+      "post": {
+        "tags": ["Bucket"],
+        "summary": "Upload image",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["file"],
+                "properties": {
+                  "file": { "type": "string", "format": "binary" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Image uploaded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "url": { "type": "string" } }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "500": { "description": "Internal error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      }
+    },
+    "/bucket/ping": {
+      "get": {
+        "tags": ["Bucket"],
+        "summary": "Ping storage",
+        "responses": {
+          "200": {
+            "description": "Storage is up",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "status": { "type": "string", "example": "up" } }
+                }
+              }
+            }
+          },
+          "503": { "description": "Storage unavailable", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      }
+    },
+    "/api/v1/reward": {
+      "post": {
+        "tags": ["Reward"],
+        "summary": "Create reward",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/CreateRewardRequest" } }
+          }
+        },
+        "responses": {
+          "201": { "description": "Reward created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RewardResponse" } } } },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "500": { "description": "Internal error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      },
+      "put": {
+        "tags": ["Reward"],
+        "summary": "Update reward",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/UpdateRewardRequest" } }
+          }
+        },
+        "responses": {
+          "200": { "description": "Reward updated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RewardResponse" } } } },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "500": { "description": "Internal error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      },
+      "get": {
+        "tags": ["Reward"],
+        "summary": "Get available rewards for current user",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "Accept-Language", "in": "header", "schema": { "type": "string", "enum": ["th", "en"], "default": "th" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of available rewards",
+            "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/RewardResponse" } } } }
+          },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "500": { "description": "Internal error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      }
+    },
+    "/api/v1/reward/list": {
+      "get": {
+        "tags": ["Reward"],
+        "summary": "Get paginated reward list",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "page",  "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 10, "maximum": 100 } },
+          { "name": "Accept-Language", "in": "header", "schema": { "type": "string", "enum": ["th", "en"], "default": "th" } }
+        ],
+        "responses": {
+          "200": { "description": "Paginated reward list", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PaginatedRewardResponse" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "500": { "description": "Internal error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      }
+    },
+    "/api/v1/reward/{rewardId}": {
+      "get": {
+        "tags": ["Reward"],
+        "summary": "Get reward by ID",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "rewardId", "in": "path", "required": true, "schema": { "type": "integer" } },
+          { "name": "Accept-Language", "in": "header", "schema": { "type": "string", "enum": ["th", "en"], "default": "th" } }
+        ],
+        "responses": {
+          "200": { "description": "Reward detail", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RewardResponse" } } } },
+          "400": { "description": "Invalid ID", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "404": { "description": "Not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "500": { "description": "Internal error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      },
+      "delete": {
+        "tags": ["Reward"],
+        "summary": "Delete reward",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "rewardId", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "204": { "description": "Deleted" },
+          "400": { "description": "Invalid ID", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "500": { "description": "Internal error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      }
+    },
+    "/api/v1/reward/code": {
+      "post": {
+        "tags": ["Reward Code"],
+        "summary": "Create reward codes",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/CreateRewardCodesRequest" } }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Codes created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "count":   { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "500": { "description": "Internal error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      },
+      "put": {
+        "tags": ["Reward Code"],
+        "summary": "Update reward code availability",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/UpdateRewardCodeRequest" } }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Code updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id":          { "type": "integer" },
+                    "isAvailable": { "type": "boolean" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "500": { "description": "Internal error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      },
+      "get": {
+        "tags": ["Reward Code"],
+        "summary": "Get codes by reward ID",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "rewardId", "in": "query", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of reward codes",
+            "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/RewardCodeResponse" } } } }
+          },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "500": { "description": "Internal error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      }
+    },
+    "/api/v1/reward/redeem": {
+      "post": {
+        "tags": ["Redeem"],
+        "summary": "Redeem a reward",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/RedeemRequest" } }
+          }
+        },
+        "responses": {
+          "200": { "description": "Redeemed successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RedeemResponse" } } } },
+          "400": { "description": "Bad request or redemption failed", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      },
+      "get": {
+        "tags": ["Redeem"],
+        "summary": "Get current user's redeem history",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Redeem transactions",
+            "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/RedeemTransactionResponse" } } } }
+          },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "500": { "description": "Internal error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      }
+    },
+    "/api/public/tiers": {
+      "get": {
+        "tags": ["Tier"],
+        "summary": "Get all loyalty tiers",
+        "responses": {
+          "200": { "description": "Tier list", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TierListResponse" } } } },
+          "500": { "description": "Internal error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      }
+    }
+  }
+}

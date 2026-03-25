@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 
 	adapthttp "github.com/pramot5525/reward-management/internal/adapters/primary/http"
+	"github.com/pramot5525/reward-management/internal/adapters/primary/http/docs"
 	"github.com/pramot5525/reward-management/internal/adapters/primary/http/handler"
 	"github.com/pramot5525/reward-management/internal/adapters/secondary/cache"
 	"github.com/pramot5525/reward-management/internal/adapters/secondary/mysql"
@@ -71,6 +72,7 @@ func main() {
 	app.Use(cors.New(cors.Config{AllowOrigins: cfg.App.OriginDomain}))
 
 	// Routes
+	docs.RegisterRoutes(app)
 	router := adapthttp.NewRouter(cfg.App.JWTSecret, rewardHandler, rewardCodeHandler, redeemHandler, bucketHandler, tierHandler)
 	router.Register(app)
 

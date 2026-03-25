@@ -1,8 +1,10 @@
 package s3
 
 import (
+	"bytes"
 	"context"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
@@ -17,12 +19,21 @@ func NewS3Storage(client *s3.Client, bucket, cdnURL string) *s3Storage {
 }
 
 func (s *s3Storage) Upload(key string, data []byte, contentType string) (string, error) {
-	// TODO: implement PutObject
-	_ = context.Background()
+	_, err := s.client.PutObject(context.Background(), &s3.PutObjectInput{
+		Bucket:      aws.String(s.bucket),
+		Key:         aws.String(key),
+		Body:        bytes.NewReader(data),
+		ContentType: aws.String(contentType),
+	})
+	if err != nil {
+		return "", err
+	}
 	return s.cdnURL + key, nil
 }
 
 func (s *s3Storage) Ping() error {
-	// TODO: implement HeadBucket
-	return nil
+	_, err := s.client.HeadBucket(context.Background(), &s3.HeadBucketInput{
+		Bucket: aws.String(s.bucket),
+	})
+	return err
 }
