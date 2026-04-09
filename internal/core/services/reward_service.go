@@ -35,6 +35,6 @@ func (s *rewardService) GetRewardList(page, limit int) ([]domain.Reward, int64, 
 	return s.rewardRepo.FindAll(offset, limit)
 }
 
-func (s *rewardService) DeleteReward(rewardID uint) error {
+func (s *redeemService) DeleteRewardCode(rewardID uint) error {
 	return s.rewardRepo.SoftDelete(rewardID)
 }

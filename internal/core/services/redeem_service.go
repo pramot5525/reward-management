@@ -46,7 +46,3 @@ func (s *redeemService) RedeemReward(userID string, rewardID uint) (*domain.Rewa
 	_ = userID
 	return code, nil
 }
-
-func (s *redeemService) GetUserRedeemed(userID string) ([]domain.RewardTransaction, error) {
-	return s.transactionRepo.FindByUserID(userID)
-}
